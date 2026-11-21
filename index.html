@@ -1,156 +1,57 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f7eaf0">
-<title>FACE LAB — Human Face Designer</title>
-<style>
-:root{--bg:#fbf7f8;--panel:#fff;--ink:#30252b;--muted:#887982;--line:#eadde3;--pink:#d85f91;--pink2:#f9e5ee;--shadow:0 8px 28px #5730440d}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Noto Sans JP",sans-serif}
-header{background:linear-gradient(120deg,#f8e5ed,#fff8fb);border-bottom:1px solid var(--line);padding:24px 18px 18px}
-.wrap{max-width:1050px;margin:auto}header .top{display:flex;align-items:center;justify-content:space-between;gap:12px}h1{font-size:25px;letter-spacing:.12em;margin:0;font-weight:850}header p{margin:6px 0 0;color:var(--muted);font-size:13px}
-.tag{font-size:11px;color:#9b3d69;background:#fff;border:1px solid #f0cbdc;padding:5px 9px;border-radius:99px;white-space:nowrap}
-main{max-width:1050px;margin:18px auto;padding:0 14px 40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,.82fr);gap:16px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;box-shadow:var(--shadow);margin-bottom:14px}
-h2{font-size:16px;margin:0 0 13px;display:flex;align-items:center;gap:8px}h2 .num{background:var(--pink2);color:#a43e6b;border-radius:8px;padding:3px 7px;font-size:11px}
-h3{font-size:13px;margin:14px 0 8px;color:#9c5473}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{min-width:0;margin:10px 0}.field label,.field .lab{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:650;margin-bottom:5px}
-input[type=text],input[type=number],select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px 11px;color:var(--ink);font:inherit;min-width:0}
-textarea{resize:vertical;min-height:75px}input:focus,select:focus,textarea:focus{outline:2px solid #f2bfd4;border-color:var(--pink)}
-input[type=range]{width:100%;accent-color:var(--pink);margin:4px 0}
-.val{font-variant-numeric:tabular-nums;color:var(--pink);font-size:12px}
-.sliderrow{display:grid;grid-template-columns:1fr 38px;gap:9px;align-items:center}
-.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 11px;font-size:12px;color:var(--muted);cursor:pointer}.chip.on{background:var(--pink2);border-color:#e9a8c4;color:#96385f}
-.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 13px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.btn.primary{background:var(--pink);border-color:var(--pink);color:#fff}.btn.soft{background:var(--pink2);border-color:#f1d1df;color:#943b64}.btn:active{transform:translateY(1px)}.btnrow{display:flex;flex-wrap:wrap;gap:8px}.btn.full{width:100%}
-.lock{border:0;background:transparent;color:#b2a4ab;padding:3px 5px;cursor:pointer;font-size:15px}.lock.on{color:var(--pink)}
-details{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}summary{cursor:pointer;font-size:13px;font-weight:700;color:#8e5a72}
-.output{position:sticky;top:12px;align-self:start}.prompt{white-space:pre-wrap;overflow-wrap:anywhere;background:#fbf7f9;border:1px solid var(--line);border-radius:12px;padding:13px;min-height:210px;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;color:#59434e}
-.small{font-size:11px;color:var(--muted)}.notice{background:#fff8fb;border:1px solid #f2dce6;border-radius:10px;padding:10px;font-size:12px;color:#79576a}
-hr{border:0;border-top:1px solid var(--line);margin:14px 0}
-@media(max-width:760px){main{display:flex;flex-direction:column}.output{position:static;order:-1}header{padding:18px 15px}.panel{padding:14px}h1{font-size:22px}}
-</style>
-</head>
-<body>
-<header><div class="wrap"><div class="top"><div><h1>FACE LAB</h1><p>Human Face Designer · 顔立ちプロンプト設計ツール</p></div><span class="tag">LOCAL · NO API</span></div></div></header>
-<main>
-<div>
-<section class="panel">
-<h2><span class="num">01</span> 人物プロフィール</h2>
-<div class="grid2">
-<div class="field"><label for="age">年齢 <span id="ageVal" class="val">24歳</span></label><input id="age" type="range" min="18" max="85" value="24"></div>
-<div class="field"><label for="gender">性別表現</label><select id="gender"><option value="woman">女性</option><option value="man">男性</option><option value="androgynous person">中性的</option><option value="person">指定しない</option></select></div>
-<div class="field"><label for="origin">人種・ルーツ</label><select id="origin"><option value="East Asian">東アジア系</option><option value="Southeast Asian">東南アジア系</option><option value="South Asian">南アジア系</option><option value="European">欧州系</option><option value="African">アフリカ系</option><option value="Middle Eastern">中東系</option><option value="Latino">ラテンアメリカ系</option><option value="mixed heritage">複数のルーツ</option><option value="">指定しない</option></select></div>
-<div class="field"><label for="skin">肌色・肌の印象</label><input id="skin" type="text" value="natural light-medium skin tone"></div>
-</div>
-<div class="field"><label for="hair">髪型・髪色</label><input id="hair" type="text" value="natural dark brown medium-length hair"></div>
-<div class="field"><label for="identity">人物設定・自由入力</label><textarea id="identity" placeholder="例：日本で暮らす大学生、落ち着いた雰囲気、前髪あり…"></textarea></div>
-<div class="field"><label>人物の印象（複数選択）</label><div id="traits" class="chips"></div></div>
-</section>
-
-<section class="panel">
-<h2><span class="num">02</span> 顔パーツの造形</h2>
-<div class="notice">数値は顔の特徴を文章化するための目安です。画像モデルが解釈するため、数値どおりの形状を保証するものではありません。鍵をかけた項目はランダム変更されません。</div>
-<div id="sliders"></div>
-<div class="btnrow" style="margin-top:14px">
-<button class="btn primary" id="random">✦ ロック以外をランダム生成</button>
-<button class="btn" id="reset">初期値に戻す</button>
-</div>
-<div class="field"><label for="randomMode">ランダムの傾向</label><select id="randomMode"><option value="natural">自然系（極端な値を避ける）</option><option value="balanced">バランス型</option><option value="distinctive">個性派（幅広い値）</option></select></div>
-</section>
-
-<section class="panel">
-<h2><span class="num">03</span> 撮影・生成スタイル</h2>
-<div class="grid2">
-<div class="field"><label for="photo">写真スタイル</label><select id="photo"><option value="candid realistic smartphone photograph">自然なスマホスナップ</option><option value="casual smartphone portrait, slight image noise">日常ポートレート</option><option value="simple passport-style portrait photograph">証明写真</option><option value="natural fashion editorial portrait">ファッション写真</option><option value="soft studio portrait photograph">スタジオポートレート</option></select></div>
-<div class="field"><label for="model">出力モデル向け</label><select id="model"><option value="general">汎用（自然文）</option><option value="flux">FLUX</option><option value="sdxl">SDXL</option><option value="qwen">Qwen Image</option></select></div>
-</div>
-<div class="field"><label for="extra">追加指示</label><textarea id="extra" placeholder="例：作り込んだ美人顔ではなく、街中にいそうな自然な顔。軽い肌の赤み…"></textarea></div>
-</section>
-<section class="panel">
-<h2><span class="num">04</span> 保存・プリセット</h2>
-<div class="field"><label for="presetName">プリセット名</label><input id="presetName" type="text" placeholder="例：素朴な東アジア系"></div>
-<div class="btnrow"><button class="btn soft" id="savePreset">この設定を保存</button><button class="btn" id="exportJson">JSONを書き出す</button><button class="btn" id="importJson">JSONを読み込む</button><input id="jsonFile" type="file" accept=".json,application/json" hidden></div>
-<div class="field"><label for="presets">保存済みプリセット</label><select id="presets"><option value="">選択してください</option></select></div>
-<div class="btnrow"><button class="btn" id="loadPreset">読み込む</button><button class="btn" id="deletePreset">削除</button></div>
-<p class="small">プリセットはこのブラウザ内に保存されます。別端末・別ブラウザとは同期されません。</p>
-</section>
-</div>
-
-<aside class="output">
-<section class="panel">
-<h2><span class="num">LIVE</span> プロンプト出力</h2>
-<div class="field"><label for="language">言語</label><select id="language"><option value="en">英語</option><option value="ja">日本語</option></select></div>
-<div id="prompt" class="prompt" aria-live="polite"></div>
-<div class="btnrow" style="margin-top:10px"><button class="btn primary full" id="copy">プロンプトをコピー</button><button class="btn full" id="downloadTxt">TXT保存</button></div>
-<hr>
-<div class="small">生成結果を画像化するAIは含まれていません。完成したプロンプトをComfyUIなどに貼り付けて使います。</div>
-</section>
-<section class="panel">
-<h2><span class="num">INFO</span> このアプリについて</h2>
-<p class="small">FACE LABはブラウザ内だけで動作します。人物設定・ランダム抽選・プロンプト生成に外部APIは使用しません。入力内容を外部サーバーへ送信しません。</p>
-</section>
-</aside>
-</main>
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FACE LAB v2</title><style>
+:root{--p:#d65d90;--bg:#faf6f8;--line:#eadde4;--ink:#30242b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}header{padding:18px;background:#f8e8ef;border-bottom:1px solid var(--line)}h1{margin:0;letter-spacing:.15em}header p{margin:3px 0;color:#887984;font-size:12px}main{max-width:1100px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:1fr 340px;gap:14px}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:12px}h2{font-size:16px;margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:8px 0}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}input,select,textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font:inherit;font-size:13px}input[type=range]{accent-color:var(--p);padding:0}textarea{min-height:65px}.v{color:var(--p);float:right}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip,.btn{border:1px solid var(--line);background:white;border-radius:20px;padding:7px 10px;font-size:12px;cursor:pointer}.chip.on,.btn.soft{background:#f9e6ee;border-color:#e7afc7;color:#963d67}.btn.primary{background:var(--p);color:white;border-color:var(--p)}.btnrow{display:flex;flex-wrap:wrap;gap:7px}.btn.full{width:100%;border-radius:9px}details{border-top:1px solid var(--line);padding:9px 0}summary{font-size:13px;font-weight:750;cursor:pointer}.rowlabel{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700}.lock{border:0;background:none;color:#b5a6ae}.lock.on{color:var(--p)}.output{position:sticky;top:10px;align-self:start}.prompt{white-space:pre-wrap;overflow-wrap:anywhere;background:#fcf8fa;border:1px solid var(--line);border-radius:10px;padding:12px;font:12px/1.7 monospace;min-height:230px}.hint{font-size:11px;color:#887984}.note{font-size:11px;background:#fff8fb;padding:9px;border-radius:9px;color:#79586a}@media(max-width:760px){main{display:flex;flex-direction:column}.output{position:static;order:-1}}@media(max-width:430px){.grid{grid-template-columns:1fr}}
+</style></head><body><header><h1>FACE LAB</h1><p>Detailed Human Face Designer · V2 · NO API</p></header><main><div>
+<section class="card"><h2>01 人物プロフィール</h2><div class="grid">
+<div class="field"><label>年齢 <span class="v" id="agev">26歳</span></label><input id="age" type="range" min="18" max="85" value="26"></div>
+<div class="field"><label>性別表現</label><select id="gender"><option value="woman">女性</option><option value="man">男性</option><option value="androgynous person">中性的</option><option value="person">指定なし</option></select></div>
+<div class="field"><label>人種・ルーツ</label><select id="origin"><option value="East Asian">東アジア系</option><option value="Southeast Asian">東南アジア系</option><option value="South Asian">南アジア系</option><option value="European">欧州系</option><option value="African">アフリカ系</option><option value="Middle Eastern">中東系</option><option value="Latino">ラテンアメリカ系</option><option value="mixed heritage">複数のルーツ</option><option value="">指定しない</option></select></div>
+<div class="field"><label>肌色</label><input id="tone" value="light-medium skin tone"></div></div>
+<div class="field"><label>人物設定・自由入力</label><textarea id="bio" placeholder="例：街中にいそうな会社員、落ち着いた雰囲気"></textarea></div><label style="font-size:12px;font-weight:700">人物の印象</label><div id="traits" class="chips"></div></section>
+<div id="groups"></div>
+<section class="card"><h2>10 表情・撮影</h2><div class="grid">
+<div class="field"><label>表情</label><select id="expression"><option value="a relaxed neutral expression">自然な真顔</option><option value="a subtle gentle smile">控えめな微笑み</option><option value="a candid mid-conversation expression">会話中</option><option value="a slightly awkward shy smile">少し照れた笑顔</option></select></div>
+<div class="field"><label>写真スタイル</label><select id="photo"><option value="candid realistic smartphone photograph">自然なスマホ写真</option><option value="casual front-camera smartphone portrait">スマホ自撮り</option><option value="simple unretouched ID portrait">証明写真</option><option value="documentary portrait photograph">ドキュメンタリー写真</option><option value="natural fashion portrait">ファッション写真</option></select></div>
+<div class="field"><label>光</label><select id="light"><option value="soft natural window light">柔らかい自然光</option><option value="ordinary indoor ambient lighting">室内照明</option><option value="overcast outdoor daylight">曇天の屋外光</option><option value="direct phone flash">スマホフラッシュ</option></select></div>
+<div class="field"><label>出力モデル</label><select id="model"><option value="general">汎用</option><option value="FLUX">FLUX</option><option value="SDXL">SDXL</option><option value="Qwen Image">Qwen Image</option></select></div></div><div class="field"><label>追加指示</label><textarea id="extra" placeholder="自由入力"></textarea></div></section>
+<section class="card"><h2>11 ランダム・保存</h2><div class="field"><label>ランダム傾向</label><select id="mode"><option value="natural">自然系</option><option value="balanced">バランス型</option><option value="distinctive">個性派</option></select></div><div class="btnrow"><button class="btn primary" id="random">✦ ロック以外をランダム</button><button class="btn" id="reset">初期化</button></div><hr><div class="field"><label>プリセット名</label><input id="pname" placeholder="例：素朴な日常顔"></div><div class="btnrow"><button class="btn soft" id="save">保存</button><button class="btn" id="export">JSON書き出し</button><button class="btn" id="import">JSON読み込み</button><input id="file" type="file" accept=".json" hidden></div><div class="field"><label>保存済み</label><select id="plist"></select></div><div class="btnrow"><button class="btn" id="load">読み込む</button><button class="btn" id="del">削除</button></div></section>
+</div><aside class="output"><section class="card"><h2>LIVE プロンプト出力</h2><div class="field"><label>言語</label><select id="lang"><option value="en">英語</option><option value="ja">日本語</option></select></div><div id="prompt" class="prompt"></div><div class="btnrow" style="margin-top:9px"><button class="btn primary full" id="copy">プロンプトをコピー</button><button class="btn full" id="txt">TXT保存</button></div></section><section class="card"><h2>INFO</h2><p class="hint">設定・抽選・プロンプト生成はブラウザ内で完結。API不要。プリセットはこのブラウザに保存。画像生成モデル自体は含まれません。</p></section></aside></main>
 <script>
-const groups=[
-["輪郭・骨格",[
-["顔の横幅","narrow","wide",48],["顔の縦幅","short","long",50],["頬の丸み","slim cheeks","full cheeks",62],["頬骨の目立ち","subtle cheekbones","prominent cheekbones",38],["顎のシャープさ","soft rounded jawline","defined angular jawline",34],["顎先の長さ","short chin","long chin",45],["額の広さ","narrow forehead","wide forehead",50]]],
-["目・眉",[
-["目の大きさ","small eyes","large eyes",45],["目の横幅","shorter eyes","wide elongated eyes",60],["目の間隔","closely spaced eyes","wide-set eyes",52],["目尻の角度","downturned outer eye corners","upturned outer eye corners",40],["上まぶた","subtle eyelid crease","defined double eyelids",38],["眉の太さ","thin eyebrows","thick eyebrows",48],["眉と目の距離","low-set brows","high-set brows",48]]],
-["鼻・口",[
-["鼻筋の高さ","low nose bridge","high nose bridge",44],["鼻の幅","narrow nose","wide nose",45],["鼻先の丸み","defined nose tip","rounded nose tip",62],["口の幅","narrow mouth","wide mouth",50],["唇の厚み","thin lips","full lips",46],["口角","slightly downturned mouth","slightly upturned mouth",52]]],
-["肌・個性",[
-["左右非対称","balanced facial symmetry","subtle natural facial asymmetry",30],["肌の質感","even skin texture","visible pores and natural skin texture",58],["そばかす・小さな特徴","clear unmarked skin","subtle freckles and tiny skin details",18],["顔立ちの個性","conventional familiar features","distinctive memorable facial features",68]]]
-];
-const traitList=["素朴","親しみやすい","知的","クール","あどけない","大人っぽい","個性的","華やか","地味","ミステリアス","健康的","アンニュイ"];
-let locks={},traits=new Set(["素朴","親しみやすい"]),values={};
-const $=id=>document.getElementById(id);
-const traitEn={"素朴":"unpretentious and down-to-earth","親しみやすい":"approachable and friendly","知的":"intelligent-looking","クール":"cool and reserved","あどけない":"youthful-looking","大人っぽい":"mature-looking","個性的":"unconventional and distinctive","華やか":"striking and glamorous","地味":"understated and ordinary-looking","ミステリアス":"quietly mysterious","健康的":"healthy and fresh-looking","アンニュイ":"subdued and wistful"};
-function build(){
- $("traits").innerHTML=traitList.map(t=>`<button type="button" class="chip ${traits.has(t)?"on":""}" data-trait="${t}">${t}</button>`).join("");
- $("traits").querySelectorAll("button").forEach(b=>b.onclick=()=>{traits.has(b.dataset.trait)?traits.delete(b.dataset.trait):traits.add(b.dataset.trait);build();render()});
- $("sliders").innerHTML=groups.map((g,gi)=>`<details ${gi===0||gi===1?"open":""}><summary>${g[0]}</summary><div class="grid2">${g[1].map((f)=>{let k=f[0];if(values[k]===undefined)values[k]=f[3];return `<div class="field"><div class="lab"><label for="s${key(k)}">${k}</label><span><span class="val" id="v${key(k)}">${values[k]}</span><button class="lock" id="l${key(k)}" title="ランダムから除外">♙</button></span></div><div class="sliderrow"><input id="s${key(k)}" type="range" min="0" max="100" value="${values[k]}" data-key="${k}"><span class="val">${values[k]}</span></div></div>`}).join("")}</div></details>`).join("");
- $("sliders").querySelectorAll('input[type=range]').forEach(el=>el.oninput=()=>{values[el.dataset.key]=+el.value;$("v"+key(el.dataset.key)).textContent=el.value;el.parentElement.querySelectorAll(".val")[1].textContent=el.value;render()});
- $("sliders").querySelectorAll(".lock").forEach((b,i)=>{let k=Object.keys(values)[i];b.classList.toggle("on",!!locks[k]);b.textContent=locks[k]?"🔒":"♙";b.onclick=()=>{locks[k]=!locks[k];b.classList.toggle("on",locks[k]);b.textContent=locks[k]?"🔒":"♙"}});
-}
-function key(s){return [...s].map(c=>c.codePointAt(0).toString(16)).join("_")}
-function ageWord(n){return `${n}-year-old`}
-function promptText(){
- const age=+$("age").value,gender=$("gender").value,origin=$("origin").value,skin=$("skin").value.trim(),hair=$("hair").value.trim(),identity=$("identity").value.trim(),photo=$("photo").value,extra=$("extra").value.trim(),model=$("model").value;
- let feature=[];
- for(const g of groups)for(const f of g[1]){let v=values[f[0]];feature.push(v<34?f[1]:v>66?f[2]:`moderate ${f[1].replace(/^(narrow|small|short|low|thin|slim|subtle|soft|defined|balanced|clear|conventional)/,"natural")}`)}
- let base=`A realistic portrait of an ${ageWord(age)} ${gender}${origin?", of "+origin+" heritage":""}. ${skin?skin+".":""} Hairstyle: ${hair||"unspecified"}. Facial structure and features: ${feature.join(", ")}.`;
- let tr=[...traits].map(t=>traitEn[t]).join(", ");if(tr)base+=` Overall impression: ${tr}. `;
- if(identity)base+=`Additional person description: ${identity}. `;
- base+=`${photo}. Natural human proportions, believable individual facial character, subtle real-world imperfections, realistic skin detail. `;
- if(extra)base+=extra+" ";
- if(model==="flux")base+="Photographic realism, natural lighting, authentic candid detail.";
- if(model==="sdxl")base+="highly detailed realistic portrait, natural skin texture, balanced composition.";
- if(model==="qwen")base+="Depict the person consistently and naturally. Avoid idealized or overly beautified facial features.";
- base+=" Avoid exaggerated anatomy, plastic skin, excessive retouching, generic idealized beauty.";
- if($("language").value==="en")return base;
- return `年齢：${age}歳。性別表現：${gender==="woman"?"女性":gender==="man"?"男性":gender==="person"?"指定なし":"中性的"}。ルーツ：${origin||"指定なし"}。肌：${skin}。髪：${hair}。\n顔の特徴：${groups.map(g=>g[0]+"："+g[1].map(f=>`${f[0]} ${values[f[0]]}/100`).join("、")).join("\n")}。\n人物の印象：${[...traits].join("、")}。\n人物設定：${identity||"なし"}。\n写真スタイル：${photo}。\n追加指示：${extra||"なし"}。\n実在感のある自然な人物写真。過度な美化、プラスチックのような肌、誇張された顔の造形を避ける。`;
-}
-function render(){$("prompt").textContent=promptText();$("ageVal").textContent=$("age").value+"歳"}
-document.querySelectorAll("input,select,textarea").forEach(el=>{if(!["jsonFile","presetName","presets"].includes(el.id))el.addEventListener("input",render)});
-function snapshot(){return {age:$("age").value,gender:$("gender").value,origin:$("origin").value,skin:$("skin").value,hair:$("hair").value,identity:$("identity").value,extra:$("extra").value,photo:$("photo").value,model:$("model").value,language:$("language").value,randomMode:$("randomMode").value,traits:[...traits],values,locks}}
-function apply(s){if(!s||typeof s!=="object")return;for(let k of ["age","gender","origin","skin","hair","identity","extra","photo","model","language","randomMode"])if(s[k]!==undefined)$(k).value=s[k];if(s.traits)traits=new Set(s.traits);if(s.values){values={...values,...s.values};for(let k in s.values){let el=$("s"+key(k));if(el){el.value=s.values[k];$("v"+key(k)).textContent=s.values[k];el.parentElement.querySelectorAll(".val")[1].textContent=s.values[k]}}}locks=s.locks||{};buildLockStates();build();render()}
-function buildLockStates(){/* lock state restored after controls exist */}
-$("age").oninput=render;
-$("random").onclick=()=>{let mode=$("randomMode").value;for(let k in values){if(locks[k])continue;let lo=mode==="natural"?24:mode==="distinctive"?3:10,hi=mode==="natural"?76:mode==="distinctive"?98:90;values[k]=Math.round(lo+Math.random()*(hi-lo));let el=$("s"+key(k));el.value=values[k];$("v"+key(k)).textContent=values[k];el.parentElement.querySelectorAll(".val")[1].textContent=values[k]}render()};
-$("reset").onclick=()=>{groups.forEach(g=>g[1].forEach(f=>values[f[0]]=f[3]));locks={};traits=new Set(["素朴","親しみやすい"]);build();render()};
-$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(promptText());$("copy").textContent="コピーしました ✓";setTimeout(()=>$("copy").textContent="プロンプトをコピー",1400)}catch(e){let r=document.createRange(),el=$("prompt");r.selectNodeContents(el);let s=getSelection();s.removeAllRanges();s.addRange(r);$("copy").textContent="テキストを選択しました"}}; 
-function saveBlob(name,content,type){let a=document.createElement("a"),u=URL.createObjectURL(new Blob([content],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
-$("downloadTxt").onclick=()=>saveBlob("face-lab-prompt.txt",promptText(),"text/plain;charset=utf-8");
-$("exportJson").onclick=()=>saveBlob("face-lab-settings.json",JSON.stringify(snapshot(),null,2),"application/json");
-$("importJson").onclick=()=>$("jsonFile").click();
-$("jsonFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{apply(JSON.parse(await f.text()))}catch(err){alert("JSONを読み込めませんでした。")}e.target.value=""};
-function presets(){try{return JSON.parse(localStorage.getItem("faceLabPresets")||"{}")}catch(e){return {}}}
-function refreshPresets(){let p=presets();$("presets").innerHTML='<option value="">選択してください</option>'+Object.keys(p).map(n=>`<option>${n.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}</option>`).join("")}
-$("savePreset").onclick=()=>{let n=$("presetName").value.trim();if(!n){alert("プリセット名を入力してください");return}let p=presets();p[n]=snapshot();localStorage.setItem("faceLabPresets",JSON.stringify(p));refreshPresets();$("presets").value=n};
-$("loadPreset").onclick=()=>{let n=$("presets").value,p=presets();if(n&&p[n])apply(p[n])};
-$("deletePreset").onclick=()=>{let n=$("presets").value;if(!n)return;let p=presets();delete p[n];localStorage.setItem("faceLabPresets",JSON.stringify(p));refreshPresets()};
-build();refreshPresets();render();
-</script>
-</body></html>
+const schema={
+"02 輪郭・骨格":[
+["顔型","s",["oval face","round face","long face","heart-shaped face","square face","diamond-shaped face","pear-shaped face"],0],
+["顔の横幅","r",48,"narrow","wide"],["顔の縦幅","r",50,"short","elongated"],["頬の丸み","r",58,"slim cheeks","full rounded cheeks"],["頬骨","r",38,"subtle cheekbones","prominent cheekbones"],
+["顎の形","s",["soft rounded jawline","gently tapered jawline","defined angular jawline","broad square jawline"],1],["顎先","r",45,"short rounded chin","long pointed chin"],["額の広さ","r",50,"narrow forehead","broad forehead"],["顔の左右差","r",28,"balanced facial symmetry","natural facial asymmetry"]],
+"03 目・まぶた":[
+["一重・二重","s",["monolids (no visible crease)","subtle inner double eyelids","low narrow double eyelid crease","natural medium-width double eyelids","wide clearly defined double eyelids"],2],
+["二重幅","r",35,"very narrow eyelid crease","wide visible eyelid crease"],["目の大きさ","r",45,"small eyes","large eyes"],["目の横幅","r",58,"short rounded eyes","long almond-shaped eyes"],["目の間隔","r",50,"closely spaced eyes","wide-set eyes"],["目尻の角度","r",45,"downturned outer corners","upturned outer corners"],["目の開き","r",55,"relaxed hooded eyes","wide-open eyes"],
+["涙袋","s",["no prominent under-eye fullness","subtle natural under-eye fullness","noticeable under-eye fullness"],1],["目頭","s",["soft rounded inner corners","defined inner corners","slightly covered inner corners"],0],["まつ毛","s",["short natural eyelashes","moderate natural eyelashes","long dense eyelashes"],1],["虹彩","s",["dark brown iris","deep black-brown iris","hazel brown iris","light brown iris"],0]],
+"04 眉":[["眉の太さ","r",48,"thin eyebrows","thick eyebrows"],["眉の形","s",["straight natural eyebrows","softly arched eyebrows","highly arched eyebrows","slightly uneven eyebrows"],0],["眉の濃さ","s",["light sparse eyebrows","medium-density eyebrows","dark dense eyebrows"],1],["眉と目の距離","r",48,"low-set brows","high-set brows"]],
+"05 鼻":[["鼻筋の高さ","r",45,"low nose bridge","high nose bridge"],["鼻の幅","r",45,"narrow nose","wide nose"],["鼻先","s",["small defined nose tip","soft rounded nose tip","slightly bulbous nose tip","upturned nose tip"],1],["小鼻","s",["narrow nostril wings","moderate nostril wings","broad nostril wings"],1],["鼻筋の形","s",["straight nose bridge","gently curved nose bridge","subtly uneven nose bridge"],0]],
+"06 口・唇・歯":[["口の幅","r",50,"narrow mouth","wide mouth"],["唇の厚み","r",48,"thin lips","full lips"],["上唇の形","s",["subtle cupid's bow","defined cupid's bow","soft rounded upper lip"],0],["口角","s",["downturned mouth corners","neutral mouth corners","upturned mouth corners"],1],["歯並び","s",["naturally straight teeth","slightly irregular natural teeth","noticeably uneven teeth","small gap between front teeth"],0],["八重歯","s",["no visible canine protrusion","subtle prominent upper canine","distinctive upper canine teeth"],0],["歯の色","s",["natural ivory teeth","warm off-white teeth","bright white teeth"],0],["歯の大きさ","s",["small natural teeth","average-sized teeth","slightly prominent front teeth"],1],["笑った時の歯","s",["teeth rarely visible","upper teeth subtly visible","broad toothy smile"],1]],
+"07 肌質・肌特徴":[["肌質","s",["smooth but realistic skin","normal natural skin texture","dry skin with fine texture","combination skin texture","oily skin with slight shine"],1],["毛穴","r",42,"barely visible pores","prominent visible pores"],["肌の凹凸","r",25,"even skin surface","uneven skin texture"],["ニキビ・跡","s",["clear skin","occasional small blemishes","subtle acne marks","visible acne and post-acne marks"],0],["そばかす","s",["no visible freckles","a few subtle freckles","scattered freckles","noticeable freckles"],0],["ほくろ","s",["no prominent moles","one or two small beauty marks","several small moles"],0],["赤み","s",["even complexion","subtle natural redness","uneven redness around nose and cheeks"],0],["目の下","s",["rested under-eye area","subtle dark circles","noticeable under-eye shadows"],0],["小じわ","s",["smooth youthful skin","fine expression lines","visible fine lines"],0],["産毛","s",["subtle facial peach fuzz","visible fine facial hair"],0]],
+"08 髪型・髪質":[["長さ","s",["pixie haircut","short hair","chin-length bob","shoulder-length hair","medium-length hair","long hair","very long hair"],4],["髪型","s",["straight loose hair","layered haircut","one-length blunt bob","shaggy layered cut","ponytail","low bun","half-up hairstyle","loose natural waves","curly hair","short cropped hairstyle"],0],["前髪","s",["no bangs, natural side part","straight full bangs","wispy see-through bangs","curtain bangs","side-swept bangs","uneven grown-out bangs"],2],["髪質","s",["fine straight hair","thick straight hair","slightly wavy hair","naturally frizzy hair","loose curls","tight curls"],1],["毛量","s",["fine low-volume hair","average hair volume","thick voluminous hair"],1],["生え際","s",["natural even hairline","slightly irregular hairline","widow's peak","soft baby hairs along hairline"],0],["髪色","t","natural dark brown hair"],["根元・毛先","t","consistent natural hair color"],["髪の細部","t","a few loose flyaway strands"]],
+"09 耳・その他":[["耳","s",["small ears close to the head","average natural ears","slightly prominent ears","large ears"],1],["耳たぶ","s",["attached earlobes","detached earlobes","small earlobes"],0],["ほくろ位置","t",""],["傷跡・特徴","t",""],["首","s",["slender neck","average neck","shorter sturdy neck"],1]]
+};
+const traits=["素朴","親しみやすい","知的","クール","あどけない","大人っぽい","個性的","華やか","地味","ミステリアス","健康的","アンニュイ","疲れた雰囲気","生活感のある自然さ"],traitEN={"素朴":"unpretentious and down-to-earth","親しみやすい":"approachable and friendly","知的":"intelligent-looking","クール":"cool and reserved","あどけない":"youthful-looking","大人っぽい":"mature-looking","個性的":"distinctive and individual","華やか":"striking","地味":"understated and ordinary-looking","ミステリアス":"quietly mysterious","健康的":"healthy-looking","アンニュイ":"subdued and wistful","疲れた雰囲気":"slightly tired-looking","生活感のある自然さ":"ordinary believable everyday appearance"};
+let vals={},locks={},selected=new Set(["素朴","生活感のある自然さ"]);const $=id=>document.getElementById(id);
+const key=(g,n)=>g+"|"+n;
+function build(){let html="";for(let [g,items] of Object.entries(schema)){html+=`<section class="card"><h2>${g}</h2><div class="grid">`;items.forEach((f,i)=>{let k=key(g,f[0]);if(vals[k]===undefined)vals[k]=f[1]==="r"?f[2]:f[1]==="s"?f[3]:f[2];let lock=`<button class="lock ${locks[k]?"on":""}" data-lock="${k}">${locks[k]?"🔒":"♙"}</button>`;if(f[1]==="r")html+=`<div class="field"><div class="rowlabel"><label>${f[0]}</label><span><span class="v" id="v-${CSS.escape(k)}">${vals[k]}</span>${lock}</span></div><input type="range" min="0" max="100" value="${vals[k]}" data-k="${k}" data-range="1"><div class="hint">${f[3]} ←→ ${f[4]}</div></div>`;else if(f[1]==="s")html+=`<div class="field"><div class="rowlabel"><label>${f[0]}</label>${lock}</div><select data-k="${k}">${f[2].map((x,j)=>`<option value="${j}" ${+vals[k]===j?"selected":""}>${x}</option>`).join("")}</select></div>`;else html+=`<div class="field"><div class="rowlabel"><label>${f[0]}</label>${lock}</div><input data-k="${k}" value="${String(vals[k]).replace(/"/g,"&quot;")}" placeholder="自由入力"></div>`});html+="</div></section>"}$("groups").innerHTML=html;$("groups").querySelectorAll("[data-k]").forEach(el=>el.oninput=()=>{vals[el.dataset.k]=el.dataset.range?+el.value:el.tagName==="SELECT"?+el.value:el.value;if(el.dataset.range)$("v-"+CSS.escape(el.dataset.k)).textContent=el.value;render()});$("groups").querySelectorAll("[data-lock]").forEach(b=>b.onclick=()=>{locks[b.dataset.lock]=!locks[b.dataset.lock];b.classList.toggle("on",locks[b.dataset.lock]);b.textContent=locks[b.dataset.lock]?"🔒":"♙"})}
+$("traits").innerHTML=traits.map(t=>`<button class="chip ${selected.has(t)?"on":""}" data-tr="${t}">${t}</button>`).join("");$("traits").querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{selected.has(b.dataset.tr)?selected.delete(b.dataset.tr):selected.add(b.dataset.tr);b.classList.toggle("on");render()});
+function val(g,n){let f=schema[g].find(x=>x[0]===n),v=vals[key(g,n)];if(f[1]==="s")return f[2][v];if(f[1]==="t")return v||"";let low=f[3],high=f[4];return v<15?"very "+low:v<32?"slightly "+low:v<44?"somewhat "+low:v<=57?"moderate, naturally proportioned":v<69?"somewhat "+high:v<86?high:v<96?"pronounced "+high:"very pronounced "+high}
+function make(){let age=$("age").value,gender=$("gender").value,origin=$("origin").value,txt=`A realistic portrait of a ${age}-year-old ${gender}${origin?", of "+origin+" heritage":""}. Skin tone: ${$("tone").value}. `;
+let groupText=[];for(let [g,items] of Object.entries(schema)){let arr=items.map(f=>val(g,f[0])).filter(Boolean);groupText.push(g.replace(/^\\d+ /,"")+": "+arr.join("; ")+".")}txt+=groupText.join(" ");
+let tr=[...selected].map(t=>traitEN[t]).join(", ");if(tr)txt+=` Overall impression: ${tr}. `;if($("bio").value.trim())txt+=`Person description: ${$("bio").value.trim()}. `;
+txt+=`Expression: ${$("expression").value}. ${$("photo").value}, ${$("light").value}. `;if($("extra").value.trim())txt+=$("extra").value.trim()+". ";
+txt+="Keep facial anatomy coherent and naturally proportioned while preserving specified distinctive traits. Realistic skin texture, subtle individual imperfections, believable everyday appearance. Avoid generic idealized beauty, plastic skin, excessive retouching and exaggerated anatomy. ";
+if($("model").value!=="general")txt+=`Optimized for ${$("model").value} image generation. `;return $("lang").value==="en"?txt:`年齢：${age}歳。性別：${gender}。ルーツ：${origin}。\n`+groupText.join("\n")+"\n人物の印象："+[...selected].join("、")+"\n人物設定："+$("bio").value+"\n表情："+$("expression").value+"\n写真："+$("photo").value+"、"+$("light").value+"\n追加指示："+$("extra").value}
+function render(){$("prompt").textContent=make();$("agev").textContent=$("age").value+"歳"}
+build();render();document.querySelectorAll("input,select,textarea").forEach(el=>el.addEventListener("input",render));
+$("random").onclick=()=>{for(let [g,items] of Object.entries(schema))for(let f of items){let k=key(g,f[0]);if(locks[k]||f[1]==="t")continue;if(f[1]==="r"){let m=$("mode").value,lo=m==="natural"?20:m==="distinctive"?0:10,hi=m==="natural"?80:m==="distinctive"?100:90;vals[k]=Math.round(lo+Math.random()*(hi-lo))}else vals[k]=Math.floor(Math.random()*f[2].length)}build();render()};
+$("reset").onclick=()=>{vals={};locks={};selected=new Set(["素朴","生活感のある自然さ"]);build();$("age").value=26;$("gender").value="woman";$("origin").value="East Asian";$("tone").value="light-medium skin tone";$("bio").value="";$("extra").value="";document.querySelectorAll("[data-tr]").forEach(b=>b.classList.toggle("on",selected.has(b.dataset.tr)));render()};
+async function copy(){try{await navigator.clipboard.writeText(make());$("copy").textContent="コピーしました ✓";setTimeout(()=>$("copy").textContent="プロンプトをコピー",1300)}catch(e){alert("コピーできませんでした。テキストを選択してコピーしてください")}}$("copy").onclick=copy;
+function blob(name,data,type){let a=document.createElement("a"),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}$("txt").onclick=()=>blob("face-lab-prompt.txt",make(),"text/plain;charset=utf-8");
+function snap(){return {profile:Object.fromEntries(["age","gender","origin","tone","bio","expression","photo","light","model","lang","extra","mode"].map(k=>[k,$(k).value])),vals,locks,traits:[...selected]}}function apply(s){Object.entries(s.profile||{}).forEach(([k,v])=>{if($(k))$(k).value=v});vals=s.vals||{};locks=s.locks||{};selected=new Set(s.traits||[]);build();$("traits").querySelectorAll("[data-tr]").forEach(b=>b.classList.toggle("on",selected.has(b.dataset.tr)));render()}
+$("export").onclick=()=>blob("face-lab-settings.json",JSON.stringify(snap(),null,2),"application/json");$("import").onclick=()=>$("file").click();$("file").onchange=async e=>{try{apply(JSON.parse(await e.target.files[0].text()))}catch(x){alert("JSONを読み込めませんでした")}e.target.value=""};
+function presets(){try{return JSON.parse(localStorage.getItem("faceLabV2")||"{}")}catch(e){return {}}}function refresh(){let p=presets();$("plist").innerHTML='<option value="">選択してください</option>'+Object.keys(p).map(n=>`<option>${n.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</option>`).join("")}
+$("save").onclick=()=>{let n=$("pname").value.trim();if(!n)return alert("プリセット名を入力してください");let p=presets();p[n]=snap();localStorage.setItem("faceLabV2",JSON.stringify(p));refresh();$("plist").value=n};$("load").onclick=()=>{let p=presets();if(p[$("plist").value])apply(p[$("plist").value])};$("del").onclick=()=>{let p=presets();delete p[$("plist").value];localStorage.setItem("faceLabV2",JSON.stringify(p));refresh()};
+</script></body></html>
