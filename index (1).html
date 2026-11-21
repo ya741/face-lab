@@ -1,0 +1,214 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FACE LAB v4.1 - Natural Human</title><style>
+:root{--p:#d65d90;--bg:#faf6f8;--line:#eadde4;--ink:#30242b}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}header{padding:18px;background:#f8e8ef;border-bottom:1px solid var(--line)}h1{margin:0;letter-spacing:.15em}header p{margin:3px 0;color:#887984;font-size:12px}main{max-width:1100px;margin:16px auto;padding:0 12px;display:grid;grid-template-columns:1fr 340px;gap:14px}.card{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:12px}h2{font-size:16px;margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{margin:8px 0}.field label{display:block;font-size:12px;font-weight:700;margin-bottom:4px}input,select,textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:9px;background:white;color:var(--ink);font:inherit;font-size:13px}input[type=range]{accent-color:var(--p);padding:0}textarea{min-height:65px}.v{color:var(--p);float:right}.chips{display:flex;flex-wrap:wrap;gap:6px}.chip,.btn{border:1px solid var(--line);background:white;border-radius:20px;padding:7px 10px;font-size:12px;cursor:pointer}.chip.on,.btn.soft{background:#f9e6ee;border-color:#e7afc7;color:#963d67}.btn.primary{background:var(--p);color:white;border-color:var(--p)}.btnrow{display:flex;flex-wrap:wrap;gap:7px}.btn.full{width:100%;border-radius:9px}details{border-top:1px solid var(--line);padding:9px 0}summary{font-size:13px;font-weight:750;cursor:pointer}.rowlabel{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700}.lock{border:0;background:none;color:#b5a6ae}.lock.on{color:var(--p)}.output{position:sticky;top:10px;align-self:start}.prompt{white-space:pre-wrap;overflow-wrap:anywhere;background:#fcf8fa;border:1px solid var(--line);border-radius:10px;padding:12px;font:12px/1.7 monospace;min-height:230px}.hint{font-size:11px;color:#887984}.note{font-size:11px;background:#fff8fb;padding:9px;border-radius:9px;color:#79586a}@media(max-width:760px){main{display:flex;flex-direction:column}.output{position:static;order:-1}}@media(max-width:430px){.grid{grid-template-columns:1fr}}
+</style></head><body><header><h1>FACE LAB</h1><p>自然な個性を持つ人物写真のプロンプト設計 · V4.1</p></header><main><div>
+<section class="card"><h2>01 人物プロフィール</h2><div class="grid">
+<div class="field"><label>年齢 <span class="v" id="agev">26歳</span></label><input id="age" type="range" min="18" max="85" value="26"></div>
+<div class="field"><label>性別表現</label><select id="gender"><option value="woman">女性</option><option value="man">男性</option><option value="androgynous person">中性的</option><option value="person">指定なし</option></select></div>
+<div class="field"><label>人種・ルーツ</label><select id="origin"><option value="East Asian">東アジア系</option><option value="Southeast Asian">東南アジア系</option><option value="South Asian">南アジア系</option><option value="European">欧州系</option><option value="African">アフリカ系</option><option value="Middle Eastern">中東系</option><option value="Latino">ラテンアメリカ系</option><option value="mixed heritage">複数のルーツ</option><option value="">指定しない</option></select></div>
+<div class="field"><label>肌色</label><input id="tone" value="light-medium skin tone"></div></div>
+<div class="field"><label>人物設定・自由入力</label><textarea id="bio" placeholder="例：街中にいそうな会社員、落ち着いた雰囲気"></textarea></div><label style="font-size:12px;font-weight:700">人物の印象</label><div id="traits" class="chips"></div></section>
+<div id="groups"></div>
+<section class="card"><h2>10 表情・撮影</h2><div class="grid">
+<div class="field"><label>表情</label><select id="expression"><option value="a relaxed neutral expression">自然な真顔</option><option value="a subtle gentle smile">控えめな微笑み</option><option value="a candid mid-conversation expression">会話中</option><option value="a slightly awkward shy smile">少し照れた笑顔</option></select></div>
+<div class="field"><label>写真スタイル</label><select id="photo"><option value="candid realistic smartphone photograph">自然なスマホ写真</option><option value="casual front-camera smartphone portrait">スマホ自撮り</option><option value="simple unretouched ID portrait">証明写真</option><option value="documentary portrait photograph">ドキュメンタリー写真</option><option value="natural fashion portrait">ファッション写真</option></select></div>
+<div class="field"><label>光</label><select id="light"><option value="soft natural window light">柔らかい自然光</option><option value="ordinary indoor ambient lighting">室内照明</option><option value="overcast outdoor daylight">曇天の屋外光</option><option value="direct phone flash">スマホフラッシュ</option></select></div>
+<div class="field"><label>出力モデル</label><select id="model"><option value="general">汎用</option><option value="FLUX">FLUX</option><option value="SDXL">SDXL</option><option value="Qwen Image">Qwen Image</option></select></div></div><div class="field"><label>追加指示</label><textarea id="extra" placeholder="自由入力"></textarea></div></section>
+
+<section class="card"><h2>11 個体差・写真のリアリティ</h2>
+<p class="hint">顔の特徴を均一に整えず、実在する人にある小さな左右差・癖・撮影条件を指定します。</p>
+<div class="grid">
+<div class="field"><label>顔立ちの個性</label><select id="individuality"><option value="subtle">控えめ・自然</option><option value="noticeable" selected>ほどよく個性的</option><option value="strong">かなり個性的</option></select></div>
+<div class="field"><label>美形化の抑制</label><select id="beauty"><option value="strong" selected>強めに抑制</option><option value="medium">ほどほど</option><option value="off">指定しない</option></select></div>
+<div class="field"><label>肌の仕上がり</label><select id="skinreal"><option value="unretouched" selected>未加工・自然な肌</option><option value="light">軽い補正</option><option value="clean">比較的きれい</option></select></div>
+<div class="field"><label>カメラの癖</label><select id="camera"><option value="front">スマホ前面カメラ</option><option value="rear" selected>スマホ背面カメラ</option><option value="snapshot">急いで撮ったスナップ</option></select></div>
+<div class="field"><label>画質・ノイズ</label><select id="quality"><option value="ordinary" selected>普通のスマホ画質</option><option value="lowlight">暗所の高感度ノイズ</option><option value="compressed">SNS圧縮・少し粗い</option><option value="clean">明るく鮮明</option></select></div>
+<div class="field"><label>構図の整い具合</label><select id="composition"><option value="casual" selected>少し雑・日常的</option><option value="centered">普通に撮影</option><option value="careless">傾き・切れのある雑な構図</option></select></div>
+</div>
+<div class="field"><label>個体差・顔の癖（自由入力）</label><textarea id="quirks" placeholder="例：左目の二重幅が右より少し広い、笑うと鼻の横に浅いしわが出る"></textarea></div>
+<div class="field"><label>撮影状況（自由入力）</label><textarea id="scene" placeholder="例：夕方の駅前、友人が少し離れた位置から撮影"></textarea></div>
+</section>
+
+<section class="card"><h2>12 ランダム・保存</h2><div class="field"><label>ランダム傾向</label><select id="mode"><option value="natural">自然系</option><option value="balanced">バランス型</option><option value="distinctive">個性派</option></select></div><div class="btnrow"><button class="btn primary" id="random">✦ ロック以外をランダム</button><button class="btn" id="reset">初期化</button></div><hr><div class="field"><label>プリセット名</label><input id="pname" placeholder="例：素朴な日常顔"></div><div class="btnrow"><button class="btn soft" id="save">保存</button><button class="btn" id="export">JSON書き出し</button><button class="btn" id="import">JSON読み込み</button><input id="file" type="file" accept=".json" hidden></div><div class="field"><label>保存済み</label><select id="plist"></select></div><div class="btnrow"><button class="btn" id="load">読み込む</button><button class="btn" id="del">削除</button></div></section>
+</div><aside class="output"><section class="card"><h2>プロンプト出力</h2><div class="field"><label>言語</label><select id="lang"><option value="en">英語</option><option value="ja">日本語</option></select></div><div id="prompt" class="prompt"></div><div class="btnrow" style="margin-top:9px"><button class="btn primary full" id="copy">プロンプトをコピー</button><button class="btn full" id="txt">TXT保存</button></div></section><section class="card"><h2>アプリについて</h2><p class="hint">設定・抽選・プロンプト生成はブラウザ内で完結。API不要。プリセットはこのブラウザに保存。画像生成モデル自体は含まれません。V4.1では顔の各要素を日本語の自然な文章にまとめ、個体差・肌の質感・撮影条件を一貫した人物描写として出力します。言語を日本語にすると、選択肢由来の説明も日本語で出力されます。自由入力欄の文章は入力した言語のまま反映されます。</p></section></aside></main>
+<script>
+const schema={
+"02 輪郭・骨格":[
+["顔型","s",["oval face","round face","long face","heart-shaped face","square face","diamond-shaped face","pear-shaped face"],0],
+["顔の横幅","r",48,"narrow","wide"],["顔の縦幅","r",50,"short","elongated"],["頬の丸み","r",58,"slim cheeks","full rounded cheeks"],["頬骨","r",38,"subtle cheekbones","prominent cheekbones"],
+["顎の形","s",["soft rounded jawline","gently tapered jawline","defined angular jawline","broad square jawline"],1],["顎先","r",45,"short rounded chin","long pointed chin"],["額の広さ","r",50,"narrow forehead","broad forehead"],["顔の左右差","r",28,"balanced facial symmetry","natural facial asymmetry"]],
+"03 目・まぶた":[
+["一重・二重","s",["monolids (no visible crease)","subtle inner double eyelids","low narrow double eyelid crease","natural medium-width double eyelids","wide clearly defined double eyelids"],2],
+["二重幅","r",35,"very narrow eyelid crease","wide visible eyelid crease"],["目の大きさ","r",45,"small eyes","large eyes"],["目の横幅","r",58,"short rounded eyes","long almond-shaped eyes"],["目の間隔","r",50,"closely spaced eyes","wide-set eyes"],["目尻の角度","r",45,"downturned outer corners","upturned outer corners"],["目の開き","r",55,"relaxed hooded eyes","wide-open eyes"],
+["涙袋","s",["no prominent under-eye fullness","subtle natural under-eye fullness","noticeable under-eye fullness"],1],["目頭","s",["soft rounded inner corners","defined inner corners","slightly covered inner corners"],0],["まつ毛","s",["short natural eyelashes","moderate natural eyelashes","long dense eyelashes"],1],["虹彩","s",["dark brown iris","deep black-brown iris","hazel brown iris","light brown iris"],0]],
+"04 眉":[["眉の太さ","r",48,"thin eyebrows","thick eyebrows"],["眉の形","s",["straight natural eyebrows","softly arched eyebrows","highly arched eyebrows","slightly uneven eyebrows"],0],["眉の濃さ","s",["light sparse eyebrows","medium-density eyebrows","dark dense eyebrows"],1],["眉と目の距離","r",48,"low-set brows","high-set brows"]],
+"05 鼻":[["鼻筋の高さ","r",45,"low nose bridge","high nose bridge"],["鼻の幅","r",45,"narrow nose","wide nose"],["鼻先","s",["small defined nose tip","soft rounded nose tip","slightly bulbous nose tip","upturned nose tip"],1],["小鼻","s",["narrow nostril wings","moderate nostril wings","broad nostril wings"],1],["鼻筋の形","s",["straight nose bridge","gently curved nose bridge","subtly uneven nose bridge"],0]],
+"06 口・唇・歯":[["口の幅","r",50,"narrow mouth","wide mouth"],["唇の厚み","r",48,"thin lips","full lips"],["上唇の形","s",["subtle cupid's bow","defined cupid's bow","soft rounded upper lip"],0],["口角","s",["downturned mouth corners","neutral mouth corners","upturned mouth corners"],1],["歯並び","s",["naturally straight teeth","slightly irregular natural teeth","noticeably uneven teeth","small gap between front teeth"],0],["八重歯","s",["no visible canine protrusion","subtle prominent upper canine","distinctive upper canine teeth"],0],["歯の色","s",["natural ivory teeth","warm off-white teeth","bright white teeth"],0],["歯の大きさ","s",["small natural teeth","average-sized teeth","slightly prominent front teeth"],1],["笑った時の歯","s",["teeth rarely visible","upper teeth subtly visible","broad toothy smile"],1]],
+"07 肌質・肌特徴":[["肌質","s",["smooth but realistic skin","normal natural skin texture","dry skin with fine texture","combination skin texture","oily skin with slight shine"],1],["毛穴","r",42,"barely visible pores","prominent visible pores"],["肌の凹凸","r",25,"even skin surface","uneven skin texture"],["ニキビ・跡","s",["clear skin","occasional small blemishes","subtle acne marks","visible acne and post-acne marks"],0],["そばかす","s",["no visible freckles","a few subtle freckles","scattered freckles","noticeable freckles"],0],["ほくろ","s",["no prominent moles","one or two small beauty marks","several small moles"],0],["赤み","s",["even complexion","subtle natural redness","uneven redness around nose and cheeks"],0],["目の下","s",["rested under-eye area","subtle dark circles","noticeable under-eye shadows"],0],["小じわ","s",["smooth youthful skin","fine expression lines","visible fine lines"],0],["産毛","s",["subtle facial peach fuzz","visible fine facial hair"],0]],
+"08 髪型・髪質":[["長さ","s",["pixie haircut","short hair","chin-length bob","shoulder-length hair","medium-length hair","long hair","very long hair"],4],["髪型","s",["straight loose hair","layered haircut","one-length blunt bob","shaggy layered cut","ponytail","low bun","half-up hairstyle","loose natural waves","curly hair","short cropped hairstyle"],0],["前髪","s",["no bangs, natural side part","straight full bangs","wispy see-through bangs","curtain bangs","side-swept bangs","uneven grown-out bangs"],2],["髪質","s",["fine straight hair","thick straight hair","slightly wavy hair","naturally frizzy hair","loose curls","tight curls"],1],["毛量","s",["fine low-volume hair","average hair volume","thick voluminous hair"],1],["生え際","s",["natural even hairline","slightly irregular hairline","widow's peak","soft baby hairs along hairline"],0],["髪色","t","natural dark brown hair"],["根元・毛先","t","consistent natural hair color"],["髪の細部","t","a few loose flyaway strands"]],
+"09 耳・その他":[["耳","s",["small ears close to the head","average natural ears","slightly prominent ears","large ears"],1],["耳たぶ","s",["attached earlobes","detached earlobes","small earlobes"],0],["ほくろ位置","t",""],["傷跡・特徴","t",""],["首","s",["slender neck","average neck","shorter sturdy neck"],1]]
+};
+const traits=["素朴","親しみやすい","知的","クール","あどけない","大人っぽい","個性的","華やか","地味","ミステリアス","健康的","アンニュイ","疲れた雰囲気","生活感のある自然さ"],traitEN={"素朴":"unpretentious and down-to-earth","親しみやすい":"approachable and friendly","知的":"intelligent-looking","クール":"cool and reserved","あどけない":"youthful-looking","大人っぽい":"mature-looking","個性的":"distinctive and individual","華やか":"striking","地味":"understated and ordinary-looking","ミステリアス":"quietly mysterious","健康的":"healthy-looking","アンニュイ":"subdued and wistful","疲れた雰囲気":"slightly tired-looking","生活感のある自然さ":"ordinary believable everyday appearance"};
+let vals={},locks={},selected=new Set(["素朴","生活感のある自然さ"]);const $=id=>document.getElementById(id);
+const key=(g,n)=>g+"|"+n;
+function build(){let html="";for(let [g,items] of Object.entries(schema)){html+=`<section class="card"><h2>${g}</h2><div class="grid">`;items.forEach((f,i)=>{let k=key(g,f[0]);if(vals[k]===undefined)vals[k]=f[1]==="r"?f[2]:f[1]==="s"?f[3]:f[2];let lock=`<button class="lock ${locks[k]?"on":""}" data-lock="${k}">${locks[k]?"🔒":"♙"}</button>`;if(f[1]==="r")html+=`<div class="field"><div class="rowlabel"><label>${f[0]}</label><span><span class="v" id="v-${CSS.escape(k)}">${vals[k]}</span>${lock}</span></div><input type="range" min="0" max="100" value="${vals[k]}" data-k="${k}" data-range="1"><div class="hint">${$("lang").value==="ja"?(dict[f[3]]||f[3]):f[3]} ←→ ${$("lang").value==="ja"?(dict[f[4]]||f[4]):f[4]}</div></div>`;else if(f[1]==="s")html+=`<div class="field"><div class="rowlabel"><label>${f[0]}</label>${lock}</div><select data-k="${k}">${f[2].map((x,j)=>`<option value="${j}" ${+vals[k]===j?"selected":""}>${$("lang").value==="ja"?(dict[x]||x):x}</option>`).join("")}</select></div>`;else html+=`<div class="field"><div class="rowlabel"><label>${f[0]}</label>${lock}</div><input data-k="${k}" value="${String(vals[k]).replace(/"/g,"&quot;")}" placeholder="自由入力"></div>`});html+="</div></section>"}$("groups").innerHTML=html;$("groups").querySelectorAll("[data-k]").forEach(el=>el.oninput=()=>{vals[el.dataset.k]=el.dataset.range?+el.value:el.tagName==="SELECT"?+el.value:el.value;if(el.dataset.range)$("v-"+CSS.escape(el.dataset.k)).textContent=el.value;render()});$("groups").querySelectorAll("[data-lock]").forEach(b=>b.onclick=()=>{locks[b.dataset.lock]=!locks[b.dataset.lock];b.classList.toggle("on",locks[b.dataset.lock]);b.textContent=locks[b.dataset.lock]?"🔒":"♙"})}
+$("traits").innerHTML=traits.map(t=>`<button class="chip ${selected.has(t)?"on":""}" data-tr="${t}">${t}</button>`).join("");$("traits").querySelectorAll("[data-tr]").forEach(b=>b.onclick=()=>{selected.has(b.dataset.tr)?selected.delete(b.dataset.tr):selected.add(b.dataset.tr);b.classList.toggle("on");render()});
+function val(g,n){let f=schema[g].find(x=>x[0]===n),v=vals[key(g,n)];if(f[1]==="s")return f[2][v];if(f[1]==="t")return v||"";let low=f[3],high=f[4];return v<15?"very "+low:v<32?"slightly "+low:v<44?"somewhat "+low:v<=57?"moderate, naturally proportioned":v<69?"somewhat "+high:v<86?high:v<96?"pronounced "+high:"very pronounced "+high}
+
+const dict={
+ "oval face":"卵型の輪郭","round face":"丸顔","long face":"面長","heart-shaped face":"ハート型の輪郭","square face":"四角い輪郭","diamond-shaped face":"ひし形の輪郭","pear-shaped face":"下側に幅のある輪郭",
+ "soft rounded jawline":"丸みのある柔らかな顎のライン","gently tapered jawline":"緩やかに細くなる顎のライン","defined angular jawline":"角ばりのある輪郭","broad square jawline":"幅広く四角い顎のライン",
+ "monolids (no visible crease)":"一重まぶた","subtle inner double eyelids":"目頭側に控えめな二重があるまぶた","low narrow double eyelid crease":"幅の狭い低めの二重ライン","natural medium-width double eyelids":"自然な中程度の幅の二重","wide clearly defined double eyelids":"幅が広くはっきりした二重",
+ "no prominent under-eye fullness":"涙袋は目立たない","subtle natural under-eye fullness":"自然で控えめな涙袋","noticeable under-eye fullness":"ふっくらと目立つ涙袋",
+ "soft rounded inner corners":"丸みのある目頭","defined inner corners":"輪郭のはっきりした目頭","slightly covered inner corners":"蒙古ひだが少し覆う目頭",
+ "short natural eyelashes":"短めで自然なまつ毛","moderate natural eyelashes":"標準的で自然なまつ毛","long dense eyelashes":"長く密度のあるまつ毛",
+ "dark brown iris":"濃い茶色の虹彩","deep black-brown iris":"黒に近い焦げ茶色の虹彩","hazel brown iris":"ヘーゼル系の茶色の虹彩","light brown iris":"明るい茶色の虹彩",
+ "straight natural eyebrows":"自然な直線的な眉","softly arched eyebrows":"緩やかなアーチ状の眉","highly arched eyebrows":"角度の強いアーチ状の眉","slightly uneven eyebrows":"左右で少し形の異なる眉",
+ "light sparse eyebrows":"薄くまばらな眉","medium-density eyebrows":"標準的な濃さの眉","dark dense eyebrows":"濃く密度の高い眉",
+ "small defined nose tip":"小さく輪郭のある鼻先","soft rounded nose tip":"丸みのある柔らかな鼻先","slightly bulbous nose tip":"少しふくらみのある鼻先","upturned nose tip":"やや上向きの鼻先",
+ "narrow nostril wings":"幅の狭い小鼻","moderate nostril wings":"標準的な幅の小鼻","broad nostril wings":"幅の広い小鼻",
+ "straight nose bridge":"まっすぐな鼻筋","gently curved nose bridge":"緩やかにカーブした鼻筋","subtly uneven nose bridge":"わずかに不均一な鼻筋",
+ "subtle cupid's bow":"控えめなキューピッドボウ","defined cupid's bow":"輪郭のはっきりした上唇の山","soft rounded upper lip":"丸みのある上唇",
+ "downturned mouth corners":"口角がやや下がっている","neutral mouth corners":"自然で水平に近い口角","upturned mouth corners":"口角がやや上がっている",
+ "naturally straight teeth":"自然に整った歯並び","slightly irregular natural teeth":"少し不揃いな自然な歯並び","noticeably uneven teeth":"目立つ不揃いのある歯並び","small gap between front teeth":"前歯に小さな隙間がある",
+ "no visible canine protrusion":"八重歯は目立たない","subtle prominent upper canine":"上の犬歯が少し目立つ","distinctive upper canine teeth":"上の犬歯が特徴的に目立つ",
+ "natural ivory teeth":"自然なアイボリー色の歯","warm off-white teeth":"少し黄みのある自然な白い歯","bright white teeth":"明るい白色の歯",
+ "small natural teeth":"小さめの自然な歯","average-sized teeth":"標準的な大きさの歯","slightly prominent front teeth":"前歯が少し大きめ",
+ "teeth rarely visible":"笑っても歯はあまり見えない","upper teeth subtly visible":"笑うと上の歯が少し見える","broad toothy smile":"歯を見せた大きな笑顔",
+ "smooth but realistic skin":"なめらかだが現実的な肌","normal natural skin texture":"標準的で自然な肌質","dry skin with fine texture":"細かな質感のある乾燥肌","combination skin texture":"部分によって異なる混合肌","oily skin with slight shine":"少し皮脂の光沢がある肌",
+ "clear skin":"目立つ肌荒れのない肌","occasional small blemishes":"時々小さな肌荒れがある","subtle acne marks":"控えめなニキビ跡","visible acne and post-acne marks":"ニキビやニキビ跡が見える",
+ "no visible freckles":"そばかすは目立たない","a few subtle freckles":"少数の薄いそばかす","scattered freckles":"点在するそばかす","noticeable freckles":"比較的目立つそばかす",
+ "no prominent moles":"目立つほくろはない","one or two small beauty marks":"小さなほくろが一つか二つある","several small moles":"小さなほくろが複数ある",
+ "even complexion":"均一に近い肌色","subtle natural redness":"自然な軽い赤み","uneven redness around nose and cheeks":"鼻や頬の周辺にむらのある赤み",
+ "rested under-eye area":"疲れの目立たない目元","subtle dark circles":"薄いクマがある","noticeable under-eye shadows":"目の下に影やクマが見える",
+ "smooth youthful skin":"なめらかで若々しい肌","fine expression lines":"表情に伴う細かなシワ","visible fine lines":"細かなシワが見える",
+ "subtle facial peach fuzz":"顔に薄い産毛がある","visible fine facial hair":"細かな顔の産毛が見える",
+ "pixie haircut":"ベリーショート","short hair":"短髪","chin-length bob":"顎の長さのボブ","shoulder-length hair":"肩までの長さの髪","medium-length hair":"ミディアムヘア","long hair":"ロングヘア","very long hair":"かなり長い髪",
+ "straight loose hair":"自然に下ろしたストレートヘア","layered haircut":"レイヤーカット","one-length blunt bob":"毛先を揃えたワンレングスボブ","shaggy layered cut":"ラフなレイヤーカット","ponytail":"ポニーテール","low bun":"低い位置でまとめたお団子","half-up hairstyle":"ハーフアップ","loose natural waves":"ゆるい自然なウェーブ","curly hair":"カールした髪","short cropped hairstyle":"短く刈り込んだ髪型",
+ "no bangs, natural side part":"前髪なしの自然なサイド分け","straight full bangs":"まっすぐな厚めの前髪","wispy see-through bangs":"薄く透ける前髪","curtain bangs":"カーテンバング","side-swept bangs":"横に流した前髪","uneven grown-out bangs":"伸びかけで不揃いな前髪",
+ "fine straight hair":"細くまっすぐな髪","thick straight hair":"太くまっすぐな髪","slightly wavy hair":"少しうねりのある髪","naturally frizzy hair":"自然なくせや広がりのある髪","loose curls":"ゆるいカール","tight curls":"強めのカール",
+ "fine low-volume hair":"細く毛量が少なめ","average hair volume":"標準的な毛量","thick voluminous hair":"毛量が多くボリュームがある",
+ "natural even hairline":"自然で整った生え際","slightly irregular hairline":"少し不揃いな生え際","widow's peak":"額中央が少し尖った生え際","soft baby hairs along hairline":"生え際に柔らかな産毛がある",
+ "small ears close to the head":"小さく頭に沿った耳","average natural ears":"標準的な大きさの耳","slightly prominent ears":"少し外側に出た耳","large ears":"大きめの耳",
+ "attached earlobes":"耳たぶが頬につながっている","detached earlobes":"耳たぶが離れている","small earlobes":"小さな耳たぶ",
+ "slender neck":"細い首","average neck":"標準的な首","shorter sturdy neck":"やや短くしっかりした首",
+ "woman":"女性","man":"男性","androgynous person":"中性的な人物","person":"人物","East Asian":"東アジア系","Southeast Asian":"東南アジア系","South Asian":"南アジア系","European":"ヨーロッパ系","African":"アフリカ系","Middle Eastern":"中東系","Latino":"ラテンアメリカ系","mixed heritage":"複数のルーツを持つ",
+ "a relaxed neutral expression":"力の抜けた自然な真顔","a subtle gentle smile":"控えめで自然な微笑み","a candid mid-conversation expression":"会話の途中の自然な表情","a slightly awkward shy smile":"少し照れたぎこちない笑顔",
+ "soft natural window light":"窓から入る柔らかな自然光","ordinary indoor ambient lighting":"一般的な室内照明","overcast outdoor daylight":"曇りの日の屋外光","direct phone flash":"スマートフォンの直接フラッシュ",
+ "unpretentious and down-to-earth":"飾り気がなく親しみやすい","approachable and friendly":"親しみやすい","intelligent-looking":"知的な印象","cool and reserved":"クールで控えめ","youthful-looking":"若々しい印象","mature-looking":"大人びた印象","distinctive and individual":"個性のある印象","striking":"華やかな印象","understated and ordinary-looking":"控えめで普通の印象","quietly mysterious":"静かなミステリアスさ","healthy-looking":"健康的な印象","subdued and wistful":"アンニュイな印象","slightly tired-looking":"少し疲れた印象","ordinary believable everyday appearance":"日常にいそうな自然な雰囲気",
+ "narrow":"幅が狭い","wide":"幅が広い","short":"短め","elongated":"縦に長い","slim cheeks":"頬の肉付きが少ない","full rounded cheeks":"丸みのあるふっくらした頬","subtle cheekbones":"目立ちにくい頬骨","prominent cheekbones":"目立つ頬骨","short rounded chin":"短く丸みのある顎先","long pointed chin":"長く尖った顎先","narrow forehead":"狭めの額","broad forehead":"広めの額","balanced facial symmetry":"左右差が少ない","natural facial asymmetry":"自然な顔の左右差","very narrow eyelid crease":"かなり狭い二重幅","wide visible eyelid crease":"幅の広い二重ライン","small eyes":"小さめの目","large eyes":"大きめの目","short rounded eyes":"横幅が短く丸みのある目","long almond-shaped eyes":"横長のアーモンド形の目","closely spaced eyes":"目と目の間隔が狭い","wide-set eyes":"目と目の間隔が広い","downturned outer corners":"目尻が下がり気味","upturned outer corners":"目尻が上がり気味","relaxed hooded eyes":"まぶたが少しかぶさった落ち着いた目","wide-open eyes":"よく開いた目","thin eyebrows":"細めの眉","thick eyebrows":"太めの眉","low-set brows":"目に近い位置の眉","high-set brows":"目から離れた位置の眉","low nose bridge":"低めの鼻筋","high nose bridge":"高めの鼻筋","narrow nose":"幅の狭い鼻","wide nose":"幅の広い鼻","narrow mouth":"幅の狭い口","wide mouth":"幅の広い口","thin lips":"薄めの唇","full lips":"厚みのある唇","barely visible pores":"目立ちにくい毛穴","prominent visible pores":"目立つ毛穴","even skin surface":"凹凸の少ない肌表面","uneven skin texture":"凹凸のある肌表面","natural dark brown hair":"自然なダークブラウンの髪","consistent natural hair color":"根元から毛先まで自然な髪色","a few loose flyaway strands":"少し浮いた後れ毛"
+ };
+function make(){
+ const ja=$("lang").value==="ja";
+ const age=$("age").value;
+
+ const trJa={"素朴":"飾り気のない素朴さ","親しみやすい":"親しみやすさ","知的":"知的な雰囲気","クール":"クールな雰囲気","あどけない":"あどけなさ","大人っぽい":"大人びた雰囲気","個性的":"個性のある雰囲気","華やか":"華やかさ","地味":"控えめで目立ちすぎない印象","ミステリアス":"ミステリアスな雰囲気","健康的":"健康的な雰囲気","アンニュイ":"アンニュイな雰囲気","疲れた雰囲気":"少し疲れた雰囲気","生活感のある自然さ":"日常にいそうな自然さ"};
+ const rangeJa=(g,n)=>{
+   const f=schema[g].find(x=>x[0]===n),v=vals[key(g,n)];
+   if(v<15)return "かなり"+(dict[f[3]]||f[3]);
+   if(v<32)return "やや"+(dict[f[3]]||f[3]);
+   if(v<44)return "少し"+(dict[f[3]]||f[3]);
+   if(v<=57)return "標準的で自然なバランス";
+   if(v<69)return "少し"+(dict[f[4]]||f[4]);
+   if(v<86)return "やや"+(dict[f[4]]||f[4]);
+   if(v<96)return "はっきりと"+(dict[f[4]]||f[4]);
+   return "かなり"+(dict[f[4]]||f[4]);
+ };
+ const get=(g,n)=>{
+   const f=schema[g].find(x=>x[0]===n),v=vals[key(g,n)];
+   if(f[1]==="r")return rangeJa(g,n);
+   if(f[1]==="t")return dict[String(v||"")]||String(v||"");
+   return dict[f[2][v]]||"";
+ };
+ const sections=[
+  ["輪郭・骨格","02 輪郭・骨格",["顔型","顔の横幅","顔の縦幅","頬の丸み","頬骨","顎の形","顎先","額の広さ","顔の左右差"]],
+  ["目・まぶた","03 目・まぶた",["一重・二重","二重幅","目の大きさ","目の横幅","目の間隔","目尻の角度","目の開き","涙袋","目頭","まつ毛","虹彩"]],
+  ["眉","04 眉",["眉の太さ","眉の形","眉の濃さ","眉と目の距離"]],
+  ["鼻","05 鼻",["鼻筋の高さ","鼻の幅","鼻先","小鼻","鼻筋の形"]],
+  ["口元","06 口・唇・歯",["口の幅","唇の厚み","上唇の形","口角","歯並び","八重歯","歯の色","歯の大きさ","笑った時の歯"]],
+  ["肌","07 肌質・肌特徴",["肌質","毛穴","肌の凹凸","ニキビ・跡","そばかす","ほくろ","赤み","目の下","小じわ","産毛"]],
+  ["髪","08 髪型・髪質",["長さ","髪型","前髪","髪質","毛量","生え際","髪色","根元・毛先","髪の細部"]],
+  ["耳・その他","09 耳・その他",["耳","耳たぶ","ほくろ位置","傷跡・特徴","首"]]
+ ];
+ const gender=dict[$("gender").value]||"人物";
+ const origin=dict[$("origin").value]||"ルーツ指定なし";
+ const toneRaw=$("tone").value.trim();
+ const tone=ja?({"light-medium skin tone":"自然な明るめ〜中間の肌色","natural light-medium skin tone":"自然な明るめ〜中間の肌色","fair skin":"明るい肌色","light skin":"明るい肌色","medium skin tone":"中間的な肌色","tan skin":"日焼けした肌色","deep skin tone":"濃い肌色"}[toneRaw]||toneRaw):toneRaw;
+ const desc=$("bio").value.trim(),quirks=$("quirks").value.trim(),scene=$("scene").value.trim(),extra=$("extra").value.trim();
+ const details=sections.map(([title,g,names])=>{
+   const parts=names.map(n=>get(g,n)).filter(Boolean);
+   return parts.length?`${title}：${parts.join("、")}`:"";
+ }).filter(Boolean);
+ const individuality={
+  subtle:"本人らしさにつながる小さな特徴をいくつか残し、左右対称に整えすぎない。",
+  noticeable:"複数の特徴の組み合わせで、その人と分かる顔立ちにする。自然な左右差や小さな癖を残す。",
+  strong:"誇張や奇抜さには寄せず、記憶に残る個性的な顔立ちにする。"
+ }[$("individuality").value];
+ const beauty={
+  strong:"美形化、理想化、過度な調和、平均顔への寄せを避ける。完璧な左右対称、大きすぎる目、小さすぎる鼻、極端に細いV字型の顎、陶器のような肌、SNSでよく見る量産型の顔にしない。",
+  medium:"過度な美化を避け、一般的な人間の骨格や小さな不均一さを保つ。",
+  off:""
+ }[$("beauty").value];
+ const skin={
+  unretouched:"毛穴、産毛、わずかな肌色のむら、細かな凹凸が見える未加工に近い肌。美肌フィルターや均一な肌補正は使わない。",
+  light:"軽い補正にとどめ、毛穴や細かな肌の質感、小さな肌荒れを残す。",
+  clean:"比較的きれいな肌だが、プラスチックのように均一にせず現実的な質感を残す。"
+ }[$("skinreal").value];
+ const camera={
+  front:"スマートフォンの前面カメラで手持ち撮影。近距離特有の軽い広角感と自然な遠近感。",
+  rear:"スマートフォンの背面カメラで何気なく撮影。一般的なスマホレンズらしい遠近感。",
+  snapshot:"撮影のタイミングを狙いすぎない、ふと撮ったスナップ写真。"
+ }[$("camera").value];
+ const quality={
+  ordinary:"一般的なスマートフォンの画質。ごく薄いセンサーノイズ、控えめな輪郭補正、自然な階調。",
+  lowlight:"暗所撮影特有のざらつきや影の色ノイズ、少し不均一な露出。",
+  compressed:"SNS投稿後の軽い圧縮感。細部がわずかに失われた自然な画像。",
+  clean:"明るく見やすい日常的なスマホ写真。ただし肌を人工的に滑らかにしない。"
+ }[$("quality").value];
+ const composition={
+  casual:"構図を作り込みすぎず、少しだけ傾いた日常的なフレーミング。",
+  centered:"特別な演出のない普通の構図。スタジオ写真のように整えない。",
+  careless:"人物が少し中心から外れ、端がわずかに切れるような無造作な構図。"
+ }[$("composition").value];
+ const expression=dict[$("expression").value]||"自然な表情";
+ const light=dict[$("light").value]||"自然な光";
+ const photoMap={
+  "candid realistic smartphone photograph":"日常の自然なスマートフォン写真",
+  "casual front-camera smartphone portrait":"スマートフォンで撮った気取らない自撮り",
+  "simple unretouched ID portrait":"加工を抑えたシンプルな証明写真",
+  "documentary portrait photograph":"記録写真のような人物写真",
+  "natural fashion portrait":"自然なファッションポートレート"
+ };
+ const intro=`${age}歳の${gender}${origin==="ルーツ指定なし"?"":"。"+origin+"のルーツを持つ人物"}。${tone?`肌色は${tone}。`:""}モデルや広告写真の被写体ではなく、実際の日常にいる特定の一人として描写する。`;
+ const lines=[intro,...details];
+ if(desc)lines.push(`人物設定：${desc}`);
+ if(quirks)lines.push(`本人固有の特徴：${quirks}`);
+ lines.push(individuality,beauty,skin);
+ lines.push(`撮影：${photoMap[$("photo").value]||"日常の人物写真"}。${camera}${quality}${composition}`);
+ lines.push(`表情：${expression}。光：${light}。`);
+ if(scene)lines.push(`撮影状況：${scene}`);
+ if(extra)lines.push(`追加指示：${extra}`);
+ lines.push("写真全体は、実際の人間の骨格と皮膚に見えること。顔の左右差、光を受けた肌の自然な変化、まとまりきらない後れ毛を残す。過度なHDR、過剰な輪郭強調、映画風の色調、スタジオの美容照明、人工的な光沢を避ける。");
+ if($("model").value!=="general")lines.push(`想定する画像生成モデル：${$("model").value}。`);
+ if(ja)return lines.filter(Boolean).join("\n\n");
+
+ // English output is deliberately built from the same selected values.
+ const faceEN=sections.map(([title,g,names])=>`${title}: ${names.map(n=>{const f=schema[g].find(x=>x[0]===n),v=vals[key(g,n)];if(f[1]==="s")return f[2][v];if(f[1]==="t")return v||"";const lo=f[3],hi=f[4];return v<15?"very "+lo:v<32?"slightly "+lo:v<44?"somewhat "+lo:v<=57?"moderate, naturally proportioned":v<69?"somewhat "+hi:v<86?hi:v<96?"pronounced "+hi:"very pronounced "+hi}).filter(Boolean).join(", ")}`).filter(x=>!x.endsWith(": ")).join(". ");
+ const traitsEN=[...selected].map(t=>traitEN[t]).join(", ");
+ const enIntro=`A candid, believable smartphone photograph of an ordinary ${age}-year-old ${$("gender").value}${$("origin").value?", with "+$("origin").value+" heritage":""}. Skin tone: ${tone}. The person should look like a specific real individual rather than a model or stock-photo subject.`;
+ const enBeauty=$("beauty").value==="strong"?"Do not beautify, idealize, harmonize, or standardize the face. Avoid perfect symmetry, oversized eyes, tiny nose, V-shaped jaw, porcelain skin, and generic influencer-face templates.":$("beauty").value==="medium"?"Avoid excessive beautification and retain ordinary human proportions and small irregularities.":"";
+ const enInd=$("individuality").value==="subtle"?"Preserve a few subtle personal irregularities rather than making the face perfectly symmetrical.":$("individuality").value==="noticeable"?"Create a recognizable combination of features with mild asymmetry and small individual quirks.":"Make the face distinctly individual without turning features into caricature.";
+ return [enIntro,faceEN,traitsEN,desc,quirks,enInd,enBeauty,skin,camera,quality,composition,`Expression: ${$("expression").value}. Lighting: ${$("light").value}.`,scene,extra,"Photographic realism: believable human anatomy, natural facial asymmetry, realistic skin response to light, imperfect flyaway hairs, no synthetic glossy finish, no cinematic color grading, no studio beauty lighting, no excessive clarity or HDR.",$("model").value!=="general"?`Target image model: ${$("model").value}.`:""].filter(Boolean).join("\n\n");
+}
+
+function render(){$("prompt").textContent=make();$("agev").textContent=$("age").value+"歳"}
+build();render();document.querySelectorAll("input,select,textarea").forEach(el=>el.addEventListener("input",render));
+$("lang").addEventListener("change",()=>{build();render()});
+$("random").onclick=()=>{for(let [g,items] of Object.entries(schema))for(let f of items){let k=key(g,f[0]);if(locks[k]||f[1]==="t")continue;if(f[1]==="r"){let m=$("mode").value,lo=m==="natural"?20:m==="distinctive"?0:10,hi=m==="natural"?80:m==="distinctive"?100:90;vals[k]=Math.round(lo+Math.random()*(hi-lo))}else vals[k]=Math.floor(Math.random()*f[2].length)}build();render()};
+$("reset").onclick=()=>{vals={};locks={};selected=new Set(["素朴","生活感のある自然さ"]);build();$("age").value=26;$("gender").value="woman";$("origin").value="East Asian";$("tone").value="light-medium skin tone";$("bio").value="";$("extra").value="";document.querySelectorAll("[data-tr]").forEach(b=>b.classList.toggle("on",selected.has(b.dataset.tr)));render()};
+async function copy(){try{await navigator.clipboard.writeText(make());$("copy").textContent="コピーしました ✓";setTimeout(()=>$("copy").textContent="プロンプトをコピー",1300)}catch(e){alert("コピーできませんでした。テキストを選択してコピーしてください")}}$("copy").onclick=copy;
+function blob(name,data,type){let a=document.createElement("a"),u=URL.createObjectURL(new Blob([data],{type}));a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}$("txt").onclick=()=>blob("face-lab-prompt.txt",make(),"text/plain;charset=utf-8");
+function snap(){return {profile:Object.fromEntries(["age","gender","origin","tone","bio","expression","photo","light","model","lang","extra","mode","individuality","beauty","skinreal","camera","quality","composition","quirks","scene"].map(k=>[k,$(k).value])),vals,locks,traits:[...selected]}}function apply(s){Object.entries(s.profile||{}).forEach(([k,v])=>{if($(k))$(k).value=v});vals=s.vals||{};locks=s.locks||{};selected=new Set(s.traits||[]);build();$("traits").querySelectorAll("[data-tr]").forEach(b=>b.classList.toggle("on",selected.has(b.dataset.tr)));render()}
+$("export").onclick=()=>blob("face-lab-settings.json",JSON.stringify(snap(),null,2),"application/json");$("import").onclick=()=>$("file").click();$("file").onchange=async e=>{try{apply(JSON.parse(await e.target.files[0].text()))}catch(x){alert("JSONを読み込めませんでした")}e.target.value=""};
+function presets(){try{return JSON.parse(localStorage.getItem("faceLabV4")||localStorage.getItem("faceLabV2")||"{}")}catch(e){return {}}}function refresh(){let p=presets();$("plist").innerHTML='<option value="">選択してください</option>'+Object.keys(p).map(n=>`<option>${n.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]))}</option>`).join("")}
+$("save").onclick=()=>{let n=$("pname").value.trim();if(!n)return alert("プリセット名を入力してください");let p=presets();p[n]=snap();localStorage.setItem("faceLabV4",JSON.stringify(p));refresh();$("plist").value=n};$("load").onclick=()=>{let p=presets();if(p[$("plist").value])apply(p[$("plist").value])};$("del").onclick=()=>{let p=presets();delete p[$("plist").value];localStorage.setItem("faceLabV4",JSON.stringify(p));refresh()};
+</script></body></html>
