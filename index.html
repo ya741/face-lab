@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7eaf0">
+<title>FACE LAB — Human Face Designer</title>
+<style>
+:root{--bg:#fbf7f8;--panel:#fff;--ink:#30252b;--muted:#887982;--line:#eadde3;--pink:#d85f91;--pink2:#f9e5ee;--shadow:0 8px 28px #5730440d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Noto Sans JP",sans-serif}
+header{background:linear-gradient(120deg,#f8e5ed,#fff8fb);border-bottom:1px solid var(--line);padding:24px 18px 18px}
+.wrap{max-width:1050px;margin:auto}header .top{display:flex;align-items:center;justify-content:space-between;gap:12px}h1{font-size:25px;letter-spacing:.12em;margin:0;font-weight:850}header p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.tag{font-size:11px;color:#9b3d69;background:#fff;border:1px solid #f0cbdc;padding:5px 9px;border-radius:99px;white-space:nowrap}
+main{max-width:1050px;margin:18px auto;padding:0 14px 40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(290px,.82fr);gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:17px;box-shadow:var(--shadow);margin-bottom:14px}
+h2{font-size:16px;margin:0 0 13px;display:flex;align-items:center;gap:8px}h2 .num{background:var(--pink2);color:#a43e6b;border-radius:8px;padding:3px 7px;font-size:11px}
+h3{font-size:13px;margin:14px 0 8px;color:#9c5473}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{min-width:0;margin:10px 0}.field label,.field .lab{display:flex;justify-content:space-between;gap:8px;font-size:13px;font-weight:650;margin-bottom:5px}
+input[type=text],input[type=number],select,textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:#fff;padding:10px 11px;color:var(--ink);font:inherit;min-width:0}
+textarea{resize:vertical;min-height:75px}input:focus,select:focus,textarea:focus{outline:2px solid #f2bfd4;border-color:var(--pink)}
+input[type=range]{width:100%;accent-color:var(--pink);margin:4px 0}
+.val{font-variant-numeric:tabular-nums;color:var(--pink);font-size:12px}
+.sliderrow{display:grid;grid-template-columns:1fr 38px;gap:9px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:7px}.chip{border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 11px;font-size:12px;color:var(--muted);cursor:pointer}.chip.on{background:var(--pink2);border-color:#e9a8c4;color:#96385f}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:10px 13px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}.btn.primary{background:var(--pink);border-color:var(--pink);color:#fff}.btn.soft{background:var(--pink2);border-color:#f1d1df;color:#943b64}.btn:active{transform:translateY(1px)}.btnrow{display:flex;flex-wrap:wrap;gap:8px}.btn.full{width:100%}
+.lock{border:0;background:transparent;color:#b2a4ab;padding:3px 5px;cursor:pointer;font-size:15px}.lock.on{color:var(--pink)}
+details{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}summary{cursor:pointer;font-size:13px;font-weight:700;color:#8e5a72}
+.output{position:sticky;top:12px;align-self:start}.prompt{white-space:pre-wrap;overflow-wrap:anywhere;background:#fbf7f9;border:1px solid var(--line);border-radius:12px;padding:13px;min-height:210px;font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;color:#59434e}
+.small{font-size:11px;color:var(--muted)}.notice{background:#fff8fb;border:1px solid #f2dce6;border-radius:10px;padding:10px;font-size:12px;color:#79576a}
+hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+@media(max-width:760px){main{display:flex;flex-direction:column}.output{position:static;order:-1}header{padding:18px 15px}.panel{padding:14px}h1{font-size:22px}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="top"><div><h1>FACE LAB</h1><p>Human Face Designer · 顔立ちプロンプト設計ツール</p></div><span class="tag">LOCAL · NO API</span></div></div></header>
+<main>
+<div>
+<section class="panel">
+<h2><span class="num">01</span> 人物プロフィール</h2>
+<div class="grid2">
+<div class="field"><label for="age">年齢 <span id="ageVal" class="val">24歳</span></label><input id="age" type="range" min="18" max="85" value="24"></div>
+<div class="field"><label for="gender">性別表現</label><select id="gender"><option value="woman">女性</option><option value="man">男性</option><option value="androgynous person">中性的</option><option value="person">指定しない</option></select></div>
+<div class="field"><label for="origin">人種・ルーツ</label><select id="origin"><option value="East Asian">東アジア系</option><option value="Southeast Asian">東南アジア系</option><option value="South Asian">南アジア系</option><option value="European">欧州系</option><option value="African">アフリカ系</option><option value="Middle Eastern">中東系</option><option value="Latino">ラテンアメリカ系</option><option value="mixed heritage">複数のルーツ</option><option value="">指定しない</option></select></div>
+<div class="field"><label for="skin">肌色・肌の印象</label><input id="skin" type="text" value="natural light-medium skin tone"></div>
+</div>
+<div class="field"><label for="hair">髪型・髪色</label><input id="hair" type="text" value="natural dark brown medium-length hair"></div>
+<div class="field"><label for="identity">人物設定・自由入力</label><textarea id="identity" placeholder="例：日本で暮らす大学生、落ち着いた雰囲気、前髪あり…"></textarea></div>
+<div class="field"><label>人物の印象（複数選択）</label><div id="traits" class="chips"></div></div>
+</section>
+
+<section class="panel">
+<h2><span class="num">02</span> 顔パーツの造形</h2>
+<div class="notice">数値は顔の特徴を文章化するための目安です。画像モデルが解釈するため、数値どおりの形状を保証するものではありません。鍵をかけた項目はランダム変更されません。</div>
+<div id="sliders"></div>
+<div class="btnrow" style="margin-top:14px">
+<button class="btn primary" id="random">✦ ロック以外をランダム生成</button>
+<button class="btn" id="reset">初期値に戻す</button>
+</div>
+<div class="field"><label for="randomMode">ランダムの傾向</label><select id="randomMode"><option value="natural">自然系（極端な値を避ける）</option><option value="balanced">バランス型</option><option value="distinctive">個性派（幅広い値）</option></select></div>
+</section>
+
+<section class="panel">
+<h2><span class="num">03</span> 撮影・生成スタイル</h2>
+<div class="grid2">
+<div class="field"><label for="photo">写真スタイル</label><select id="photo"><option value="candid realistic smartphone photograph">自然なスマホスナップ</option><option value="casual smartphone portrait, slight image noise">日常ポートレート</option><option value="simple passport-style portrait photograph">証明写真</option><option value="natural fashion editorial portrait">ファッション写真</option><option value="soft studio portrait photograph">スタジオポートレート</option></select></div>
+<div class="field"><label for="model">出力モデル向け</label><select id="model"><option value="general">汎用（自然文）</option><option value="flux">FLUX</option><option value="sdxl">SDXL</option><option value="qwen">Qwen Image</option></select></div>
+</div>
+<div class="field"><label for="extra">追加指示</label><textarea id="extra" placeholder="例：作り込んだ美人顔ではなく、街中にいそうな自然な顔。軽い肌の赤み…"></textarea></div>
+</section>
+<section class="panel">
+<h2><span class="num">04</span> 保存・プリセット</h2>
+<div class="field"><label for="presetName">プリセット名</label><input id="presetName" type="text" placeholder="例：素朴な東アジア系"></div>
+<div class="btnrow"><button class="btn soft" id="savePreset">この設定を保存</button><button class="btn" id="exportJson">JSONを書き出す</button><button class="btn" id="importJson">JSONを読み込む</button><input id="jsonFile" type="file" accept=".json,application/json" hidden></div>
+<div class="field"><label for="presets">保存済みプリセット</label><select id="presets"><option value="">選択してください</option></select></div>
+<div class="btnrow"><button class="btn" id="loadPreset">読み込む</button><button class="btn" id="deletePreset">削除</button></div>
+<p class="small">プリセットはこのブラウザ内に保存されます。別端末・別ブラウザとは同期されません。</p>
+</section>
+</div>
+
+<aside class="output">
+<section class="panel">
+<h2><span class="num">LIVE</span> プロンプト出力</h2>
+<div class="field"><label for="language">言語</label><select id="language"><option value="en">英語</option><option value="ja">日本語</option></select></div>
+<div id="prompt" class="prompt" aria-live="polite"></div>
+<div class="btnrow" style="margin-top:10px"><button class="btn primary full" id="copy">プロンプトをコピー</button><button class="btn full" id="downloadTxt">TXT保存</button></div>
+<hr>
+<div class="small">生成結果を画像化するAIは含まれていません。完成したプロンプトをComfyUIなどに貼り付けて使います。</div>
+</section>
+<section class="panel">
+<h2><span class="num">INFO</span> このアプリについて</h2>
+<p class="small">FACE LABはブラウザ内だけで動作します。人物設定・ランダム抽選・プロンプト生成に外部APIは使用しません。入力内容を外部サーバーへ送信しません。</p>
+</section>
+</aside>
+</main>
+<script>
+const groups=[
+["輪郭・骨格",[
+["顔の横幅","narrow","wide",48],["顔の縦幅","short","long",50],["頬の丸み","slim cheeks","full cheeks",62],["頬骨の目立ち","subtle cheekbones","prominent cheekbones",38],["顎のシャープさ","soft rounded jawline","defined angular jawline",34],["顎先の長さ","short chin","long chin",45],["額の広さ","narrow forehead","wide forehead",50]]],
+["目・眉",[
+["目の大きさ","small eyes","large eyes",45],["目の横幅","shorter eyes","wide elongated eyes",60],["目の間隔","closely spaced eyes","wide-set eyes",52],["目尻の角度","downturned outer eye corners","upturned outer eye corners",40],["上まぶた","subtle eyelid crease","defined double eyelids",38],["眉の太さ","thin eyebrows","thick eyebrows",48],["眉と目の距離","low-set brows","high-set brows",48]]],
+["鼻・口",[
+["鼻筋の高さ","low nose bridge","high nose bridge",44],["鼻の幅","narrow nose","wide nose",45],["鼻先の丸み","defined nose tip","rounded nose tip",62],["口の幅","narrow mouth","wide mouth",50],["唇の厚み","thin lips","full lips",46],["口角","slightly downturned mouth","slightly upturned mouth",52]]],
+["肌・個性",[
+["左右非対称","balanced facial symmetry","subtle natural facial asymmetry",30],["肌の質感","even skin texture","visible pores and natural skin texture",58],["そばかす・小さな特徴","clear unmarked skin","subtle freckles and tiny skin details",18],["顔立ちの個性","conventional familiar features","distinctive memorable facial features",68]]]
+];
+const traitList=["素朴","親しみやすい","知的","クール","あどけない","大人っぽい","個性的","華やか","地味","ミステリアス","健康的","アンニュイ"];
+let locks={},traits=new Set(["素朴","親しみやすい"]),values={};
+const $=id=>document.getElementById(id);
+const traitEn={"素朴":"unpretentious and down-to-earth","親しみやすい":"approachable and friendly","知的":"intelligent-looking","クール":"cool and reserved","あどけない":"youthful-looking","大人っぽい":"mature-looking","個性的":"unconventional and distinctive","華やか":"striking and glamorous","地味":"understated and ordinary-looking","ミステリアス":"quietly mysterious","健康的":"healthy and fresh-looking","アンニュイ":"subdued and wistful"};
+function build(){
+ $("traits").innerHTML=traitList.map(t=>`<button type="button" class="chip ${traits.has(t)?"on":""}" data-trait="${t}">${t}</button>`).join("");
+ $("traits").querySelectorAll("button").forEach(b=>b.onclick=()=>{traits.has(b.dataset.trait)?traits.delete(b.dataset.trait):traits.add(b.dataset.trait);build();render()});
+ $("sliders").innerHTML=groups.map((g,gi)=>`<details ${gi===0||gi===1?"open":""}><summary>${g[0]}</summary><div class="grid2">${g[1].map((f)=>{let k=f[0];if(values[k]===undefined)values[k]=f[3];return `<div class="field"><div class="lab"><label for="s${key(k)}">${k}</label><span><span class="val" id="v${key(k)}">${values[k]}</span><button class="lock" id="l${key(k)}" title="ランダムから除外">♙</button></span></div><div class="sliderrow"><input id="s${key(k)}" type="range" min="0" max="100" value="${values[k]}" data-key="${k}"><span class="val">${values[k]}</span></div></div>`}).join("")}</div></details>`).join("");
+ $("sliders").querySelectorAll('input[type=range]').forEach(el=>el.oninput=()=>{values[el.dataset.key]=+el.value;$("v"+key(el.dataset.key)).textContent=el.value;el.parentElement.querySelectorAll(".val")[1].textContent=el.value;render()});
+ $("sliders").querySelectorAll(".lock").forEach((b,i)=>{let k=Object.keys(values)[i];b.classList.toggle("on",!!locks[k]);b.textContent=locks[k]?"🔒":"♙";b.onclick=()=>{locks[k]=!locks[k];b.classList.toggle("on",locks[k]);b.textContent=locks[k]?"🔒":"♙"}});
+}
+function key(s){return [...s].map(c=>c.codePointAt(0).toString(16)).join("_")}
+function ageWord(n){return `${n}-year-old`}
+function promptText(){
+ const age=+$("age").value,gender=$("gender").value,origin=$("origin").value,skin=$("skin").value.trim(),hair=$("hair").value.trim(),identity=$("identity").value.trim(),photo=$("photo").value,extra=$("extra").value.trim(),model=$("model").value;
+ let feature=[];
+ for(const g of groups)for(const f of g[1]){let v=values[f[0]];feature.push(v<34?f[1]:v>66?f[2]:`moderate ${f[1].replace(/^(narrow|small|short|low|thin|slim|subtle|soft|defined|balanced|clear|conventional)/,"natural")}`)}
+ let base=`A realistic portrait of an ${ageWord(age)} ${gender}${origin?", of "+origin+" heritage":""}. ${skin?skin+".":""} Hairstyle: ${hair||"unspecified"}. Facial structure and features: ${feature.join(", ")}.`;
+ let tr=[...traits].map(t=>traitEn[t]).join(", ");if(tr)base+=` Overall impression: ${tr}. `;
+ if(identity)base+=`Additional person description: ${identity}. `;
+ base+=`${photo}. Natural human proportions, believable individual facial character, subtle real-world imperfections, realistic skin detail. `;
+ if(extra)base+=extra+" ";
+ if(model==="flux")base+="Photographic realism, natural lighting, authentic candid detail.";
+ if(model==="sdxl")base+="highly detailed realistic portrait, natural skin texture, balanced composition.";
+ if(model==="qwen")base+="Depict the person consistently and naturally. Avoid idealized or overly beautified facial features.";
+ base+=" Avoid exaggerated anatomy, plastic skin, excessive retouching, generic idealized beauty.";
+ if($("language").value==="en")return base;
+ return `年齢：${age}歳。性別表現：${gender==="woman"?"女性":gender==="man"?"男性":gender==="person"?"指定なし":"中性的"}。ルーツ：${origin||"指定なし"}。肌：${skin}。髪：${hair}。\n顔の特徴：${groups.map(g=>g[0]+"："+g[1].map(f=>`${f[0]} ${values[f[0]]}/100`).join("、")).join("\n")}。\n人物の印象：${[...traits].join("、")}。\n人物設定：${identity||"なし"}。\n写真スタイル：${photo}。\n追加指示：${extra||"なし"}。\n実在感のある自然な人物写真。過度な美化、プラスチックのような肌、誇張された顔の造形を避ける。`;
+}
+function render(){$("prompt").textContent=promptText();$("ageVal").textContent=$("age").value+"歳"}
+document.querySelectorAll("input,select,textarea").forEach(el=>{if(!["jsonFile","presetName","presets"].includes(el.id))el.addEventListener("input",render)});
+function snapshot(){return {age:$("age").value,gender:$("gender").value,origin:$("origin").value,skin:$("skin").value,hair:$("hair").value,identity:$("identity").value,extra:$("extra").value,photo:$("photo").value,model:$("model").value,language:$("language").value,randomMode:$("randomMode").value,traits:[...traits],values,locks}}
+function apply(s){if(!s||typeof s!=="object")return;for(let k of ["age","gender","origin","skin","hair","identity","extra","photo","model","language","randomMode"])if(s[k]!==undefined)$(k).value=s[k];if(s.traits)traits=new Set(s.traits);if(s.values){values={...values,...s.values};for(let k in s.values){let el=$("s"+key(k));if(el){el.value=s.values[k];$("v"+key(k)).textContent=s.values[k];el.parentElement.querySelectorAll(".val")[1].textContent=s.values[k]}}}locks=s.locks||{};buildLockStates();build();render()}
+function buildLockStates(){/* lock state restored after controls exist */}
+$("age").oninput=render;
+$("random").onclick=()=>{let mode=$("randomMode").value;for(let k in values){if(locks[k])continue;let lo=mode==="natural"?24:mode==="distinctive"?3:10,hi=mode==="natural"?76:mode==="distinctive"?98:90;values[k]=Math.round(lo+Math.random()*(hi-lo));let el=$("s"+key(k));el.value=values[k];$("v"+key(k)).textContent=values[k];el.parentElement.querySelectorAll(".val")[1].textContent=values[k]}render()};
+$("reset").onclick=()=>{groups.forEach(g=>g[1].forEach(f=>values[f[0]]=f[3]));locks={};traits=new Set(["素朴","親しみやすい"]);build();render()};
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(promptText());$("copy").textContent="コピーしました ✓";setTimeout(()=>$("copy").textContent="プロンプトをコピー",1400)}catch(e){let r=document.createRange(),el=$("prompt");r.selectNodeContents(el);let s=getSelection();s.removeAllRanges();s.addRange(r);$("copy").textContent="テキストを選択しました"}}; 
+function saveBlob(name,content,type){let a=document.createElement("a"),u=URL.createObjectURL(new Blob([content],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
+$("downloadTxt").onclick=()=>saveBlob("face-lab-prompt.txt",promptText(),"text/plain;charset=utf-8");
+$("exportJson").onclick=()=>saveBlob("face-lab-settings.json",JSON.stringify(snapshot(),null,2),"application/json");
+$("importJson").onclick=()=>$("jsonFile").click();
+$("jsonFile").onchange=async e=>{let f=e.target.files[0];if(!f)return;try{apply(JSON.parse(await f.text()))}catch(err){alert("JSONを読み込めませんでした。")}e.target.value=""};
+function presets(){try{return JSON.parse(localStorage.getItem("faceLabPresets")||"{}")}catch(e){return {}}}
+function refreshPresets(){let p=presets();$("presets").innerHTML='<option value="">選択してください</option>'+Object.keys(p).map(n=>`<option>${n.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}</option>`).join("")}
+$("savePreset").onclick=()=>{let n=$("presetName").value.trim();if(!n){alert("プリセット名を入力してください");return}let p=presets();p[n]=snapshot();localStorage.setItem("faceLabPresets",JSON.stringify(p));refreshPresets();$("presets").value=n};
+$("loadPreset").onclick=()=>{let n=$("presets").value,p=presets();if(n&&p[n])apply(p[n])};
+$("deletePreset").onclick=()=>{let n=$("presets").value;if(!n)return;let p=presets();delete p[n];localStorage.setItem("faceLabPresets",JSON.stringify(p));refreshPresets()};
+build();refreshPresets();render();
+</script>
+</body></html>
